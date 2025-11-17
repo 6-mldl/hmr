@@ -16,6 +16,15 @@ from person_detector import PersonDetector, MultiObjectTracker
 from video_processor import VideoProcessor
 from kinematics_analyzer import KinematicsAnalyzer, TemporalSmoother, ViolationDetector
 
+def to_serializable(val):
+    # 저장 형식 numpy에서 Native Python으로 변환
+    if isinstance(val, (np.int32, np.int64)):
+        return int(val)
+    if isinstance(val, (np.float32, np.float64)):
+        return float(val)
+    if isinstance(val, np.ndarray):
+        return val.tolist()
+    return val
 
 def main(args):
     """메인 파이프라인 실행"""
@@ -157,7 +166,7 @@ def main(args):
     # JSON 저장
     report_path = os.path.join(args.output_dir, 'analysis_report.json')
     with open(report_path, 'w') as f:
-        json.dump(report, f, indent=2)
+        json.dump(report, f, indent=2, default=to_serializable)
     
     print(f"✓ Report saved to: {report_path}")
     
